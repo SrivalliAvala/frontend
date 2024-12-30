@@ -1,6 +1,6 @@
 pipeline {
     agent {
-        label 'AGENT-1'
+        label 'agent-1'
     }
     options{
         timeout(time: 30, unit: 'MINUTES')
@@ -11,7 +11,7 @@ pipeline {
         DEBUG = 'true'
         appVersion = '' // this will become global, we can use across pipeline
         region = 'us-east-1'
-        account_id = '315069654700'
+        account_id = '127214173178'
         project = 'expense'
         environment = 'dev'
         component = 'frontend'
@@ -30,7 +30,7 @@ pipeline {
         stage('Docker build') {
             
             steps {
-                withAWS(region: 'us-east-1', credentials: 'aws-creds') {
+                withAWS(region: 'us-east-1', credentials: 'aws-cred') {
                     sh """
                     aws ecr get-login-password --region ${region} | docker login --username AWS --password-stdin ${account_id}.dkr.ecr.us-east-1.amazonaws.com
 
@@ -45,7 +45,7 @@ pipeline {
         }
         stage('Deploy'){
             steps{
-                withAWS(region: 'us-east-1', credentials: 'aws-creds') {
+                withAWS(region: 'us-east-1', credentials: 'aws-cred') {
                     sh """
                         aws eks update-kubeconfig --region ${region} --name ${project}-${environment}
                         cd helm
